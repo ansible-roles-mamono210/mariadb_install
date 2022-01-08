@@ -1,6 +1,6 @@
 ---
 - name: Verify
-  gather_facts: false
+  gather_facts: true
   hosts: all
 
   tasks:
@@ -8,6 +8,17 @@
       ansible.builtin.command: mysqld --version
       register: mariadb_install
       changed_when: false
+      when:
+        - ansible_distribution == "CentOS"
+        - ansible_distribution_major_version == "7"
+
+    - name: Check whether MariaDB is installed
+      ansible.builtin.command: mysql --version
+      register: mariadb_install
+      changed_when: false
+      when:
+        - ansible_distribution == "CentOS"
+        - ansible_distribution_major_version == "8"
 
     - name: Check OS version
       ansible.builtin.command: cat /etc/redhat-release

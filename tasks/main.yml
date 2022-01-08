@@ -8,17 +8,43 @@
     gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
     gpgcheck: yes
     state: present
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "7"
 
-- name: Install mariadb-devel and mariadb-server
+- name: Install mariadb-devel and mariadb-server(CentOS7)
   ansible.builtin.yum:
     name:
       - MariaDB-devel
       - MariaDB-server
     state: present
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "7"
 
-- name: Install MySQL-python
+- name: Install mariadb-devel and mariadb-server(CentOS8)
+  ansible.builtin.yum:
+    name:
+      - mariadb-server
+      - mariadb-devel
+    state: present
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "8"
+
+- name: Install MySQL-python(CentOS7)
   ansible.builtin.yum:
     name: MySQL-python
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "7"
+
+- name: Install MySQL-python(CentOS8)
+  ansible.builtin.yum:
+    name: python3-PyMySQL
+  when:
+    - ansible_distribution == "CentOS"
+    - ansible_distribution_major_version == "8"
 
 - name: Create '/etc/my.cnf'
   ansible.builtin.template:

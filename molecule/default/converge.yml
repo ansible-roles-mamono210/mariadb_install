@@ -1,7 +1,8 @@
 ---
 - name: Converge
-  hosts: all
   become: true
+  gather_facts: true
+  hosts: all
   vars:
     ansible_user: ansible
   roles:
