@@ -3,7 +3,7 @@
 Role Description
 =========
 
-Install [MariaDB](https://mariadb.org) for CentOS7.
+Install [MariaDB](https://mariadb.org) for CentOS7/Stream8.
 
 Requirements
 ------------
