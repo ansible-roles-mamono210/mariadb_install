@@ -1,4 +1,4 @@
-[![](https://github.com/ansible-roles-mamono210/mariadb_install/workflows/build/badge.svg)](https://github.com/ansible-roles-mamono210/mariadb_install/actions?query=workflow%3Abuild)
+[![CircleCI](https://circleci.com/gh/ansible-roles-mamono210/mariadb_install/tree/main.svg?style=svg)](https://circleci.com/gh/ansible-roles-mamono210/mariadb_install/tree/main)
 
 Role Description
 =========
