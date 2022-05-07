@@ -4,7 +4,7 @@
     name: mariadb
     file: MariaDB
     description: MariaDB
-    baseurl: http://yum.mariadb.org/10.1/centos7-amd64
+    baseurl: "{{ mariadb_centos7_repo }}"
     gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
     gpgcheck: yes
     state: present

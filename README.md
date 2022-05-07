@@ -15,6 +15,10 @@ Role Variables
 
 ```YAML
 ---
+# MariaDB CentOS7 repository
+mariadb_centos7_repo: http://yum.mariadb.org/10.7/centos7-amd64
+
+
 # MariaDB root password
 mariadb_root_password: password
 ```

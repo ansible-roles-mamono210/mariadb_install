@@ -5,8 +5,9 @@
 
   tasks:
     - name: Check whether MariaDB is installed
-      ansible.builtin.command: mysqld --version
-      register: mariadb_install
+      become: yes
+      ansible.builtin.command: mysql --version
+      register: mariadb_install_ce7
       changed_when: false
       when:
         - ansible_distribution == "CentOS"
@@ -14,7 +15,7 @@
 
     - name: Check whether MariaDB is installed
       ansible.builtin.command: mysql --version
-      register: mariadb_install
+      register: mariadb_install_ce8
       changed_when: false
       when:
         - ansible_distribution == "CentOS"
@@ -25,9 +26,19 @@
       register: os_version
       changed_when: false
 
-    - name: Make sure MariaDB is installed
+    - name: Make sure MariaDB is installed(CentOS7)
       ansible.builtin.debug:
-        var: mariadb_install
+        var: mariadb_install_ce7
+      when:
+        - ansible_distribution == "CentOS"
+        - ansible_distribution_major_version == "7"
+
+    - name: Make sure MariaDB is installed(CentOS8)
+      ansible.builtin.debug:
+        var: mariadb_install_ce8
+      when:
+        - ansible_distribution == "CentOS"
+        - ansible_distribution_major_version == "8"
 
     - name: Show OS version
       ansible.builtin.debug:
