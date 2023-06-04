@@ -80,7 +80,6 @@ workflows:
               checkout-path:
                 - 'mariadb_install'
               molecule-image:
-                - 'ghcr.io/docker-images-mamono210/ansible-test/centos7:latest'
                 - 'ghcr.io/docker-images-mamono210/ansible-test/centos-stream8:latest'
           requires:
             - ansible-lint
