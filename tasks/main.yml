@@ -1,50 +1,22 @@
 ---
-- name: Enable the MariaDB repository
-  ansible.builtin.yum_repository:
-    name: mariadb
-    file: MariaDB
-    description: MariaDB
-    baseurl: "{{ mariadb_centos7_repo }}"
-    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-    gpgcheck: yes
-    state: present
-  when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
-
-- name: Install mariadb-devel and mariadb-server(CentOS7)
-  ansible.builtin.yum:
-    name:
-      - MariaDB-devel
-      - MariaDB-server
-    state: present
-  when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
-
-- name: Install mariadb-devel and mariadb-server(CentOS8)
+- name: Install mariadb-server
   ansible.builtin.yum:
     name:
       - mariadb-server
+    state: present
+
+- name: Install mariadb-devel
+  ansible.builtin.yum:
+    name:
       - mariadb-devel
     state: present
   when:
     - ansible_distribution == "CentOS"
     - ansible_distribution_major_version == "8"
 
-- name: Install MySQL-python(CentOS7)
-  ansible.builtin.yum:
-    name: MySQL-python
-  when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
-
-- name: Install MySQL-python(CentOS8)
+- name: Install MySQL-python
   ansible.builtin.yum:
     name: python3-PyMySQL
-  when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "8"
 
 - name: Create '/etc/my.cnf'
   ansible.builtin.template:
@@ -61,25 +33,46 @@
     enabled: yes
   timeout: 20
 
-- name: Delete anonymous user
+- name: Check for socket in /etc/my.cnf
+  ansible.builtin.shell: grep -m 1 'socket' /etc/my.cnf | awk -F'=' '{print $2}'
+  register: socket_path_result
+  changed_when: false
+  ignore_errors: yes
+
+- name: Check for socket in /etc/mysql/mariadb.conf.d/
+  ansible.builtin.shell: grep -m 1 'socket' /etc/mysql/mariadb.conf.d/* | awk -F'=' '{print $2}'
+  register: socket_path_conf_d
+  changed_when: false
+  ignore_errors: yes
+
+- name: Determine Unix Socket path
+  ansible.builtin.set_fact:
+    unix_socket_path: "{{ socket_path_result.stdout | default(socket_path_conf_d.stdout) }}"
+
+- name: Set root user password
   community.mysql.mysql_user:
+    login_unix_socket: "{{ unix_socket_path }}"
+    login_user: root
+    login_password: ''
+    name: root
+    password: "{{ mariadb_root_password }}"
+    host_all: yes
+    column_case_sensitive: true
+
+- name: Remove anonymous user accounts
+  community.mysql.mysql_user:
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
     name: ''
     state: absent
+    host_all: yes
 
 - name: Delete test database
   community.mysql.mysql_db:
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
     name: test
     state: absent
-
-- name: Set root password
-  community.mysql.mysql_user:
-    name: root
-    host: "{{ item }}"
-    password: "{{ mariadb_root_password }}"
-  with_items:
-    - 127.0.0.1
-    - ::1
-    - localhost
 
 - name: Restart mariadb service
   ansible.builtin.service:
