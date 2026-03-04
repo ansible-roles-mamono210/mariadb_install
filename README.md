@@ -3,7 +3,7 @@
 Role Description
 =========
 
-Install [MariaDB](https://mariadb.org) for Linux.
+Install [MariaDB](https://mariadb.org) for CentOS Stream.
 
 Requirements
 ------------
